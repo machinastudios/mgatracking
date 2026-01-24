@@ -1,4 +1,4 @@
-package com.machina.gatracking;
+package com.machina.mstatstracking;
 
 import java.util.Map;
 
@@ -6,20 +6,19 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
-import com.machina.gatracking.services.GATrackingService;
-import com.machina.gatracking.storage.InstallationTracker;
+import com.machina.mstatstracking.storage.InstallationTracker;
 
 /**
- * Public API for Google Analytics tracking.
+ * Public API for PostHog tracking.
  * This class provides static methods for other mods to use for tracking events.
  */
-public class GATrackingAPI {
+public class StatsTrackingAPI {
     /**
-     * Get a tracking helper instance for a specific plugin.
+     * Get a tracking helper instance for a specific mod.
      * This helper automatically uses the plugin's name as the mod ID.
      *
-     * @param plugin The plugin instance
-     * @return A PluginTracker instance for the plugin
+     * @param mod The mod instance
+     * @return A ModTracker instance for the mod
      */
     @Nonnull
     public static PluginTracker forPlugin(@Nonnull JavaPlugin plugin) {

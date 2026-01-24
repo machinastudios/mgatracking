@@ -1,18 +1,17 @@
-package com.machina.gatracking;
+package com.machina.mstatstracking;
 
 import javax.annotation.Nonnull;
 
-import com.hypixel.hytale.server.core.HytaleServer;
 import com.hypixel.hytale.server.core.event.events.player.PlayerReadyEvent;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hypixel.hytale.server.core.universe.Universe;
-import com.machina.gatracking.services.GATrackingService;
-import com.machina.gatracking.storage.InstallationTracker;
+import com.machina.mstatstracking.services.MStatsTrackingService;
+import com.machina.mstatstracking.storage.InstallationTracker;
 import com.machina.shared.SuperPlugin;
-import com.machina.shared.config.PluginConfig;
+import com.machina.shared.config.ConfigurationFile;
 
 /**
- * The main class for the Google Analytics tracking system
+ * The main class for the PostHog tracking system
  */
 public class Main extends SuperPlugin {
     /**
@@ -25,15 +24,15 @@ public class Main extends SuperPlugin {
     /**
      * The plugin configuration
      */
-    public PluginConfig config = new PluginConfig(this, "config");
+    public ConfigurationFile config = new ConfigurationFile(this, "config");
 
     /**
-     * The Google Analytics tracking service
+     * The PostHog tracking service
      */
-    private GATrackingService trackingService;
+    private MStatsTrackingService trackingService;
 
     /**
-     * The installation tracker for managing plugin installations
+     * The installation tracker for managing mod installations
      */
     private InstallationTracker installationTracker;
 
@@ -41,7 +40,7 @@ public class Main extends SuperPlugin {
         super(init);
     }
 
-    public void init() {
+    public void start() {
         // Load the configuration
         this.loadConfig();
 
@@ -49,7 +48,7 @@ public class Main extends SuperPlugin {
         INSTANCE = this;
 
         // Initialize tracking service
-        this.trackingService = new GATrackingService(this.config);
+        this.trackingService = new MStatsTrackingService(this.config);
 
         // Initialize installation tracker
         this.installationTracker = new InstallationTracker(this.getConfigDirectory());
@@ -72,7 +71,7 @@ public class Main extends SuperPlugin {
      * @return The GATrackingService instance
      */
     @Nonnull
-    public GATrackingService getTrackingService() {
+    public MStatsTrackingService getTrackingService() {
         return this.trackingService;
     }
 
@@ -101,16 +100,14 @@ public class Main extends SuperPlugin {
      * Load the configuration
      */
     private void loadConfig() {
-        // Google Analytics configuration
-        this.config.addDefault("ga.enabled", true, "Whether Google Analytics tracking is enabled");
-        this.config.addDefault("ga.measurementId", "", "Google Analytics Measurement ID (G-XXXXXXXXXX)");
+        // PostHog configuration
+        this.config.addDefault("posthog.enabled", true, "Whether PostHog tracking is enabled");
+        this.config.addDefault("posthog.apiKey", "", "PostHog API Key");
 
         // Tracking configuration
-        this.config.addDefault("tracking.autoTrackPlayers", true, "Whether to automatically track player connections");
-        this.config.addDefault("tracking.autoTrackServerStartup", true, "Whether to automatically track server startup");
-
-        // Rate limiting configuration
-        this.config.addDefault("rateLimit.maxRequestsPerMinute", 20, "Maximum number of GA requests per minute");
+        this.config.addDefault("tracking.features.playerConnections", true, "Whether to automatically track player connections");
+        this.config.addDefault("tracking.features.serverLifecyle", true, "Whether to automatically track server lifecycle (startup and shutdown)");
+        this.config.addDefault("tracking.features.vmStats", true, "Whether to automatically track VM stats (memory, CPU, etc.)");
 
         // Load the configuration
         this.config.load();
